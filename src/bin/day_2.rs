@@ -1,5 +1,7 @@
 mod read_input;
 
+use std::cmp;
+
 const MAX_TOTAL: i32 = 39;
 
 
@@ -45,7 +47,43 @@ fn get_score_for_game(line: String) -> i32 {
     id
 }
 
-fn main() {
+fn get_power_for_line(line: String) -> u32 {
+    let mut game_parts = line.split(':');
+
+    let mut red: u32 = 0;
+    let mut blue: u32 = 0;
+    let mut green: u32 = 0;
+
+    let raw_rounds = game_parts.nth(1).unwrap().split(';');
+    for raw_round in raw_rounds {
+        let split = raw_round.split(',');
+
+        for raw_color in split {
+            let mut count_color = raw_color.trim().split_whitespace();
+            let count: u32 = count_color.next().unwrap().trim().parse().unwrap();
+            let color = count_color.next().unwrap();
+            match color {
+                "red" => {
+                    red = cmp::max(red, count);
+                },
+                "green" => {
+                    green = cmp::max(green, count);
+                },
+                "blue" => {
+                    blue = cmp::max(blue, count);
+                },
+                &_ => todo!()
+            }
+            
+            
+        }
+    }
+    println!("r * b * g ==> {} * {} * {}", &red, &blue, &green);
+    red * blue * green
+
+}
+
+fn part_1() {
     let lines = read_input::file_to_lines("./bin/day2.input").expect("uhoh");
 
     let mut sum = 0;
@@ -54,4 +92,20 @@ fn main() {
         sum += id;
     }
     println!("{}", sum);
+}
+
+fn part_2() {
+    let lines = read_input::file_to_lines("./bin/day2.input-test").expect("uhoh");
+
+    let mut sum = 0;
+    for line in lines {
+        sum += get_power_for_line(line.unwrap());
+    }
+    println!("sum is: {}", sum)
+
+}
+
+fn main() {
+    // part_1();
+    part_2();
 }
